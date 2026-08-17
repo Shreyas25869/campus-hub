@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CampusHub — Your campus, connected. Discover clubs, events, and campus life." />
+  <title>CampusHub — Your Campus, Connected</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-brand" onclick="window.location.href='index.html'">
+      <div class="brand-icon">⬡</div>
+      <span>Campus<strong>Hub</strong></span>
+    </div>
+
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="clubs.html">Clubs</a>
+      <a href="events.html">Events</a>
+      <a href="#reels">Reels</a>
+      <a href="#tickets">Tickets</a>
+    </div>
+
+    <!-- Dynamic User Profile Dropdown -->
+    <div class="nav-user" id="navUserWrapper">
+      <div class="profile-dropdown">
+        <button class="profile-btn" onclick="toggleProfileMenu()">
+          <span class="avatar-circle" id="user-avatar">U</span>
+          <span id="nav-user-name" class="user-name-text">Loading...</span>
+          <span class="dropdown-arrow">▾</span>
+        </button>
+
+        <div id="profile-dropdown-menu" class="dropdown-content">
+          <!-- Dynamically populated by JS based on user role -->
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        Your Campus. Your Community.
+      </div>
+      <h1>Everything happening <span class="gradient-text">on campus.</span></h1>
+      <p>Discover clubs, events, people and experiences that make your campus life unforgettable.</p>
+      <div class="hero-buttons">
+        <a class="btn-primary btn-large" href="clubs.html">Explore Clubs</a>
+        <a class="btn-outline btn-large" href="events.html">Discover Events</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-orbit orbit-1"></div>
+      <div class="hero-orbit orbit-2"></div>
+      <div class="hero-card card-main">
+        <div class="mini-icon purple">◈</div>
+        <div><strong>Campus Clubs</strong><span>Find your community</span></div>
+      </div>
+      <div class="hero-card card-event">
+        <div class="mini-icon orange">◆</div>
+        <div><strong>Live Events</strong><span>What's happening?</span></div>
+      </div>
+      <div class="hero-card card-reel">
+        <div class="mini-icon pink">▶</div>
+        <div><strong>Campus Reels</strong><span>See what's trending</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLUBS -->
+  <section class="section campus-link-section" id="clubs">
+    <div class="section-header">
+      <div>
+        <span class="section-label">DISCOVER</span>
+        <h2>Find your <span class="gradient-text">tribe.</span></h2>
+        <p>Explore student clubs, discover their communities, and manage club activities from the dedicated Clubs section.</p>
+      </div>
+      <a class="section-link-btn" href="clubs.html">Open Clubs ↗</a>
+    </div>
+
+    <div class="campus-feature-card clubs-feature">
+      <div class="feature-icon">♣</div>
+      <div class="feature-copy">
+        <span class="feature-kicker">CAMPUS COMMUNITIES</span>
+        <h3>Explore every active club</h3>
+        <p>Browse clubs, view members and leaders, explore club details, and use the role-based club controls already connected to Supabase.</p>
+      </div>
+      <a class="feature-action" href="clubs.html">Explore Clubs <span>→</span></a>
+    </div>
+  </section>
+
+  <!-- EVENTS -->
+  <section class="section section-alt campus-link-section" id="events">
+    <div class="section-header">
+      <div>
+        <span class="section-label">WHAT'S ON</span>
+        <h2>Upcoming <span class="gradient-text">events.</span></h2>
+        <p>Find campus events directly from the Supabase-backed Events module.</p>
+      </div>
+      <a class="section-link-btn" href="events.html">Open Events ↗</a>
+    </div>
+
+    <div class="campus-feature-card events-feature">
+      <div class="feature-icon">◆</div>
+      <div class="feature-copy">
+        <span class="feature-kicker">LIVE CAMPUS EVENTS</span>
+        <h3>Discover what is happening next</h3>
+        <p>View upcoming events, filter them, open full details, register, and manage event activity using the dedicated Events page.</p>
+      </div>
+      <a class="feature-action" href="events.html">View Events <span>→</span></a>
+    </div>
+  </section>
+
+  <!-- REELS -->
+  <section class="section" id="reels">
+    <div class="section-header">
+      <div>
+        <span class="section-label">CAMPUS LIFE</span>
+        <h2>Campus <span class="gradient-text">Reels.</span></h2>
+        <p>See what's happening around your campus.</p>
+      </div>
+    </div>
+    <div id="reelsGrid" class="reels-grid">
+      <div class="club-empty">
+        <strong>Loading reels...</strong>
+        <span>Connecting to CampusHub database.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKETS -->
+  <section class="section section-alt" id="tickets">
+    <div class="section-header">
+      <div>
+        <span class="section-label">YOUR ACCESS</span>
+        <h2>Your <span class="gradient-text">tickets.</span></h2>
+        <p>Keep all your campus event tickets in one place.</p>
+      </div>
+    </div>
+    <div id="ticketsGrid" class="tickets-grid"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-brand">
+      <div class="nav-brand">
+        <div class="brand-icon">⬡</div>
+        <span>Campus<strong>Hub</strong></span>
+      </div>
+      <p>Your campus. Your community.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#home">Home</a>
+      <a href="clubs.html">Clubs</a>
+      <a href="events.html">Events</a>
+      <a href="#reels">Reels</a>
+      <a href="#tickets">Tickets</a>
+    </div>
+  </footer>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeLogin()">×</button>
+      <h2>Welcome back</h2>
+      <p>Login to your CampusHub account.</p>
+      <div id="loginError" class="auth-error hidden"></div>
+      <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email" required />
+        <input type="password" id="loginPassword" placeholder="Password" required style="margin-top:10px;" />
+        <button type="submit" class="btn-primary btn-full" style="margin-top:16px;">Login</button>
+      </form>
+      <p class="modal-switch">Don't have an account? <button onclick="switchToSignup()">Sign up</button></p>
+    </div>
+  </div>
+
+  <!-- SIGNUP MODAL -->
+  <div class="modal-overlay hidden" id="signupModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeSignup()">×</button>
+      <h2>Create account</h2>
+      <p>Join your campus community.</p>
+      <div id="signupError" class="auth-error hidden"></div>
+      <form id="signupForm">
+        <input type="text" id="signupName" placeholder="Full Name" required />
+        <input type="email" id="signupEmail" placeholder="Email" required style="margin-top:10px;" />
+        <input type="password" id="signupPassword" placeholder="Password" required style="margin-top:10px;" />
+        <button type="submit" class="btn-primary btn-full" style="margin-top:16px;">Create Account</button>
+      </form>
+      <p class="modal-switch">Already have an account? <button onclick="switchToLogin()">Login</button></p>
+    </div>
+  </div>
+
+  <!-- TICKET PURCHASE MODAL -->
+  <div class="modal-overlay hidden" id="ticketModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('ticketModal')">×</button>
+      <h2 id="ticketModalTitle">Event Registration</h2>
+      <p id="ticketModalDesc">Select ticket quantities</p>
+      <form id="ticketForm">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:15px 0;background:var(--surface-2);padding:10px 15px;border-radius:10px;">
+          <span>Quantity:</span>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button type="button" class="btn-outline" style="padding:4px 10px;" onclick="changeQty(-1)">-</button>
+            <strong id="ticketQty">1</strong>
+            <button type="button" class="btn-outline" style="padding:4px 10px;" onclick="changeQty(1)">+</button>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
+          <span>Total:</span>
+          <strong id="ticketTotalPrice" style="color:var(--primary-light);">FREE</strong>
+        </div>
+        <button type="submit" class="btn-primary btn-full">Confirm Booking</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- YOUTUBE PLAYER MODAL OVERLAY -->
+  <div class="modal-overlay hidden" id="reelVideoModal" onclick="closeReelModal(event)">
+    <div class="modal reel-modal" style="max-width: 400px; padding: 0; overflow: hidden; background: #000; border: 1px solid #272338; border-radius: 12px;">
+      <div style="display:flex; justify-content: space-between; align-items:center; padding: 12px 16px; background: #13111c;">
+        <strong id="ytModalTitle" style="color:#fff; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80%;">Campus Reel</strong>
+        <button onclick="closeReelPlayer()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <!-- Container where YouTube API (or a direct <video>) injects the player -->
+      <div class="reel-player-wrap">
+        <div id="youtube-player-container"></div>
+      </div>
+
+      <div class="reel-modal-footer">
+        <button type="button" class="reel-like-btn" id="reelLikeBtn" onclick="toggleReelLike()">
+          <span class="reel-like-icon" id="reelLikeIcon">♡</span>
+          <span id="reelLikeCount">0</span>
+        </button>
+        <span class="reel-modal-subtext" id="reelModalSubtext">Campus Community</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Scripts -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

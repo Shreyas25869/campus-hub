@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Member Dashboard — CampusHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="toast" class="toast hidden"></div>
+
+  <nav class="navbar">
+    <div class="nav-brand" onclick="window.location.href='index.html'">
+      <div class="brand-icon">⬡</div>
+      <span>Campus<strong>Hub</strong> <small>(Member)</small></span>
+    </div>
+    <div class="nav-user">
+      <button class="btn-primary" onclick="logout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <main class="dashboard-container" style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+    <header class="dashboard-header" style="margin-bottom: 2rem;">
+      <h1>🎓 My Student Hub</h1>
+      <p>Access your booked event tickets, joined clubs, and account settings.</p>
+    </header>
+
+    <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div class="event-card" style="padding: 1.5rem;">
+        <h3>My Tickets</h3>
+        <p>View active registrations and QR passes for upcoming events.</p>
+      </div>
+      <div class="event-card" style="padding: 1.5rem;">
+        <h3>My Joined Clubs</h3>
+        <p>Check announcements and exclusive activities from your clubs.</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

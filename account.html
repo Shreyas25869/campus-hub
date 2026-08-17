@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account — CampusVerse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="auth-page">
+
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="nav-brand auth-brand" onclick="window.location.href='index.html'">
+        <div class="brand-icon">⬡</div>
+        <span>Campus<strong>Hub</strong></span>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="auth-tabs">
+        <button id="tabLogin" class="auth-tab active" onclick="switchAuthMode('login')">Sign In</button>
+        <button id="tabSignup" class="auth-tab" onclick="switchAuthMode('signup')">Create Account</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" class="auth-form">
+        <h2>Welcome back</h2>
+        <p class="auth-subtitle">Sign in to your account to continue.</p>
+        <div id="loginError" class="auth-error hidden"></div>
+
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="student@university.edu" required />
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" class="btn-primary btn-full btn-large">Sign In</button>
+      </form>
+
+      <!-- SIGNUP FORM -->
+      <form id="signupForm" class="auth-form hidden">
+        <h2>Join CampusVerse</h2>
+        <p class="auth-subtitle">Discover clubs, events, and campus news.</p>
+        <div id="signupError" class="auth-error hidden"></div>
+
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" placeholder="Alex Morgan" required />
+        </div>
+
+        <div class="form-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" placeholder="student@university.edu" required />
+        </div>
+
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" placeholder="Create a strong password" required />
+        </div>
+
+        <div class="form-group">
+          <label for="signupStatus">Student Status</label>
+          <select id="signupStatus">
+            <option value="non_club_member">Student</option>
+            <option value="club_member">Club Member</option>
+            <option value="club_leader">Club Leader</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-primary btn-full btn-large">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

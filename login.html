@@ -1,0 +1,178 @@
+from pathlib import Path
+
+login_html = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="description"
+    content="CampusHub secure login — access your campus clubs, events and community."
+  />
+
+  <title>Login | CampusHub</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Shared CampusHub styling -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="auth.css" />
+</head>
+
+<body class="auth-page">
+
+  <!-- Background effects -->
+  <div class="auth-bg" aria-hidden="true">
+    <div class="auth-glow auth-glow-one"></div>
+    <div class="auth-glow auth-glow-two"></div>
+    <div class="auth-grid"></div>
+  </div>
+
+  <!-- Minimal authentication navbar -->
+  <header class="auth-navbar">
+    <a href="index.html" class="auth-brand" aria-label="CampusHub home">
+      <span class="auth-brand-icon">⬡</span>
+      <span>Campus<strong>Hub</strong></span>
+    </a>
+
+    <a href="index.html" class="auth-home-link">
+      ← Back to CampusHub
+    </a>
+  </header>
+
+  <main class="auth-main">
+
+    <section class="auth-card" aria-labelledby="loginTitle">
+
+      <div class="auth-card-glow" aria-hidden="true"></div>
+
+      <div class="auth-header">
+        <div class="auth-icon">⬡</div>
+
+        <span class="auth-eyebrow">CAMPUS ACCESS</span>
+
+        <h1 id="loginTitle">
+          Welcome <span>back.</span>
+        </h1>
+
+        <p>
+          Sign in to continue to your CampusHub account.
+        </p>
+      </div>
+
+      <form id="loginForm" class="auth-form" novalidate>
+
+        <div class="auth-field">
+          <label for="loginEmail">Email</label>
+
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">✉</span>
+
+            <input
+              type="email"
+              id="loginEmail"
+              name="email"
+              placeholder="you@university.edu"
+              autocomplete="email"
+              inputmode="email"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <div class="auth-label-row">
+            <label for="loginPassword">Password</label>
+          </div>
+
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">⌑</span>
+
+            <input
+              type="password"
+              id="loginPassword"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+
+            <button
+              type="button"
+              class="password-toggle"
+              id="toggleLoginPassword"
+              aria-label="Show password"
+              aria-pressed="false"
+            >
+              Show
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="loginButton" class="auth-submit">
+          <span class="auth-submit-text">Log In</span>
+          <span class="auth-submit-loader" aria-hidden="true"></span>
+        </button>
+
+        <div
+          id="authMessage"
+          class="auth-message"
+          role="alert"
+          aria-live="polite"
+          hidden
+        ></div>
+
+      </form>
+
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+
+      <p class="auth-switch">
+        Don't have a CampusHub account?
+        <a href="signup.html">Create an account</a>
+      </p>
+
+    </section>
+
+    <p class="auth-footer-note">
+      Your account access is securely determined by CampusHub.
+    </p>
+
+  </main>
+
+  <!-- Supabase must load before auth.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+
+  <script>
+    // Password visibility toggle.
+    document.addEventListener("DOMContentLoaded", () => {
+      const password = document.getElementById("loginPassword");
+      const toggle = document.getElementById("toggleLoginPassword");
+
+      if (!password || !toggle) return;
+
+      toggle.addEventListener("click", () => {
+        const visible = password.type === "text";
+
+        password.type = visible ? "password" : "text";
+        toggle.textContent = visible ? "Show" : "Hide";
+        toggle.setAttribute("aria-pressed", String(!visible));
+        toggle.setAttribute(
+          "aria-label",
+          visible ? "Show password" : "Hide password"
+        );
+      });
+    });
+  </script>
+
+</body>
+</html>

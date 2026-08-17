@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — CampusVerse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .user-dropdown { position: relative; display: inline-block; }
+    .user-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: #1f293d; color: #fff; border: 1px solid #374151;
+      padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;
+    }
+    .dropdown-menu {
+      position: absolute; right: 0; top: 110%; width: 180px;
+      background: #1e1b2e; border: 1px solid #374151; border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 100; display: none;
+      flex-direction: column; overflow: hidden;
+    }
+    .dropdown-menu.show { display: flex; }
+    .dropdown-menu a, .dropdown-menu button {
+      padding: 0.75rem 1rem; color: #e5e7eb; text-decoration: none;
+      background: none; border: none; text-align: left; width: 100%;
+      cursor: pointer; font-size: 0.9rem;
+    }
+    .dropdown-menu a:hover, .dropdown-menu button:hover { background: #2d2845; }
+    .dropdown-menu hr { border: none; border-top: 1px solid #374151; margin: 0; }
+    .admin-badge { background: #8b5cf6; color: #fff; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+    .section-block { background: #13111c; border: 1px solid #272338; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    .action-row { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+    .btn-danger { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-success { background: #10b981; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
+    .btn-success:hover { background: #059669; }
+    .btn-secondary { background: #4b5563; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
+
+    /* Modal Overlay Styles */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; transition: opacity 0.2s ease;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: #181524; border: 1px solid #2d2845; border-radius: 12px;
+      padding: 2rem; width: 90%; max-width: 500px; max-height: 90vh;
+      overflow-y: auto; position: relative; color: #fff;
+    }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem; background: none;
+      border: none; color: #9ca3af; font-size: 1.5rem; cursor: pointer;
+    }
+    .modal-close:hover { color: #fff; }
+    .modal h2 { margin-bottom: 0.5rem; font-size: 1.4rem; color: #fff; }
+    .form-group label { display: block; margin-bottom: 0.4rem; color: #e5e7eb; font-size: 0.9rem; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid #374151;
+      background: #111827; color: #fff; font-size: 0.95rem; box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand" onclick="window.location.href='index.html'" style="cursor: pointer;">
+      <div class="brand-icon">⬡</div>
+      <span>Campus<strong>Verse</strong> <span class="admin-badge">Admin Mode</span></span>
+    </div>
+
+    <div class="nav-user">
+      <div class="user-dropdown">
+        <button class="user-btn" onclick="toggleDropdown()">
+          <span id="user-display-name">Admin User</span> ▾
+        </button>
+        <div id="user-menu" class="dropdown-menu">
+          <a href="#profile" onclick="openProfileModal()">👤 Profile</a>
+          <a href="#settings" onclick="openSettingsModal()">⚙️ Settings</a>
+          <hr />
+          <button onclick="logout()" style="color: #f87171;">🚪 Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="dashboard-container" style="padding: 6rem 2rem 2rem 2rem; max-width: 1200px; margin: 0 auto;">
+    <header class="dashboard-header" style="margin-bottom: 2rem;">
+      <h1 style="font-size: 2rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">🛡️ System Administrator Dashboard</h1>
+      <p style="color: #9ca3af;">Full control over campus clubs, event creation, leader assignments, and user approvals.</p>
+    </header>
+
+    <!-- Leader Controls -->
+    <h2 style="margin-bottom: 1rem; color: #a78bfa;">👑 Leader Controls</h2>
+    <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+      <div class="event-card" style="padding: 1.5rem;">
+        <h3>Host New Event</h3>
+        <p style="color: #9ca3af; font-size: 0.9rem; margin-top: 0.5rem;">Publish workshops, hackathons, and ticketing options for any club.</p>
+        <button class="btn-primary" style="margin-top: 1rem; width: 100%;" onclick="createEventModal()">+ Create Event</button>
+      </div>
+      <div class="event-card" style="padding: 1.5rem;">
+        <h3>Club Roster</h3>
+        <p style="color: #9ca3af; font-size: 0.9rem; margin-top: 0.5rem;">View active members and manage club attendee participation.</p>
+        <button class="btn-primary" style="margin-top: 1rem; width: 100%;" onclick="viewRoster()">Manage Roster</button>
+      </div>
+      <div class="event-card" style="padding: 1.5rem;">
+        <h3>Post Reel / Highlight</h3>
+        <p style="color: #9ca3af; font-size: 0.9rem; margin-top: 0.5rem;">Share media, promotional stories, and YouTube Shorts to the feed.</p>
+        <button class="btn-primary" style="margin-top: 1rem; width: 100%;" onclick="postReelModal()">+ Add Reel</button>
+      </div>
+    </div>
+
+    <!-- Extended Admin Controls -->
+    <h2 style="margin-bottom: 1rem; color: #8b5cf6;">⚡ Extended Admin Functionalities</h2>
+    
+    <div class="section-block">
+      <h3>🏛️ Club Approvals & Removal</h3>
+      <p style="color: #9ca3af; margin-bottom: 1rem;">Approve incoming club creation requests or remove existing clubs from CampusVerse.</p>
+      
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 280px; background: #1e1b2e; padding: 1rem; border-radius: 8px;">
+          <h4>Pending Club Applications</h4>
+          <ul id="pending-clubs-list" style="list-style: none; padding: 0; margin-top: 0.5rem;">
+            <li style="padding: 0.5rem 0; color: #9ca3af; font-size: 0.9rem;">Loading pending applications...</li>
+          </ul>
+        </div>
+
+        <div style="flex: 1; min-width: 280px; background: #1e1b2e; padding: 1rem; border-radius: 8px;">
+          <h4>Active Clubs (Removal)</h4>
+          <ul id="active-clubs-list" style="list-style: none; padding: 0; margin-top: 0.5rem;">
+            <li style="padding: 0.5rem 0; color: #9ca3af; font-size: 0.9rem;">Loading active clubs...</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <h3>👥 Role & Member Management</h3>
+      <p style="color: #9ca3af; margin-bottom: 1rem;">Promote members to leaders, demote leaders, or bypass leader approvals to directly add members.</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+        <div style="background: #1e1b2e; padding: 1rem; border-radius: 8px;">
+          <h4>Leader Roles</h4>
+          <div style="margin-top: 0.75rem;">
+            <input type="email" id="user-email-role" placeholder="User Email Address" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #374151; background: #111827; color: white; margin-bottom: 0.5rem; box-sizing: border-box;">
+            <div class="action-row">
+              <button class="btn-success" onclick="makeLeader()">Make Leader</button>
+              <button class="btn-danger" onclick="removeLeader()">Remove Leader</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #1e1b2e; padding: 1rem; border-radius: 8px;">
+          <h4>Directly Add Member</h4>
+          <p style="font-size: 0.8rem; color: #a78bfa;">Admins bypass leader approval directly.</p>
+          <div style="margin-top: 0.5rem;">
+            <input type="email" id="direct-member-email" placeholder="Member Email Address" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #374151; background: #111827; color: white; margin-bottom: 0.5rem; box-sizing: border-box;">
+            <select id="direct-club-select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #374151; background: #111827; color: white; margin-bottom: 0.5rem; box-sizing: border-box;">
+              <option value="">Select Club</option>
+            </select>
+            <button class="btn-success" style="width: 100%;" onclick="addMemberDirectly()">Add Member Instantly</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ADD REEL MODAL -->
+  <div class="modal-overlay hidden" id="addReelModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('addReelModal')">&times;</button>
+      <h2>Post New YouTube Short</h2>
+      <p style="color: #9ca3af; margin-bottom: 1rem; font-size: 0.85rem;">Add a YouTube Short link or Video ID to display on the campus reel feed.</p>
+      
+      <form id="addReelForm" onsubmit="handlePostReel(event)">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="reelTitle">Reel Title</label>
+          <input type="text" id="reelTitle" placeholder="e.g. HackFest Highlights 🔥" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="reelClub">Club / Host Name</label>
+          <input type="text" id="reelClub" placeholder="e.g. CodeCraft" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="reelYtUrl">YouTube Short Link or Video ID</label>
+          <input type="text" id="reelYtUrl" placeholder="https://www.youtube.com/shorts/dQw4w9WgXcQ" required />
+        </div>
+
+        <button type="submit" class="btn-primary" style="width:100%;">Publish Reel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CREATE EVENT MODAL -->
+  <div class="modal-overlay hidden" id="createEventModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('createEventModal')">&times;</button>
+      <h2>Host New Event</h2>
+      <p style="color: #9ca3af; margin-bottom: 1rem; font-size: 0.85rem;">Create a campus event and specify seat count & ticket pricing.</p>
+      
+      <form id="createEventForm" onsubmit="handleCreateEvent(event)">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="eventTitle">Event Name</label>
+          <input type="text" id="eventTitle" placeholder="e.g. AI & ML Summit 2026" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="eventClub">Hosting Club</label>
+          <input type="text" id="eventClub" placeholder="e.g. CodeCraft" required />
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+          <div class="form-group" style="flex:1;">
+            <label for="eventDate">Date</label>
+            <input type="text" id="eventDate" placeholder="Oct 25, 2026" required />
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label for="eventTime">Time</label>
+            <input type="text" id="eventTime" placeholder="10:00 AM" required />
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="eventVenue">Venue</label>
+          <input type="text" id="eventVenue" placeholder="e.g. Main Auditorium" required />
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group" style="flex:1;">
+            <label for="eventPrice">Price (₹)</label>
+            <input type="number" id="eventPrice" min="0" value="0" required />
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label for="eventSeats">Available Seats</label>
+            <input type="number" id="eventSeats" min="1" value="50" required />
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width:100%;">Publish Event</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ROSTER MODAL -->
+  <div class="modal-overlay hidden" id="rosterModal">
+    <div class="modal" style="max-width: 600px;">
+      <button class="modal-close" onclick="closeModal('rosterModal')">&times;</button>
+      <h2>📋 Campus Club Roster</h2>
+      <p style="color: #9ca3af; margin-bottom: 1rem; font-size: 0.85rem;">Active club members across CampusVerse.</p>
+      
+      <div id="roster-content" style="max-height: 350px; overflow-y: auto; background: #111827; padding: 1rem; border-radius: 8px;">
+        <p style="color: #9ca3af;">Loading roster...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+  <script>
+    // System & Auth Init
+    document.addEventListener("DOMContentLoaded", async () => {
+      await initAdminDashboard();
+    });
+
+    async function initAdminDashboard() {
+      const supabase = getSupabase();
+      if (!supabase) return;
+
+      // 1. Verify User Session & Role
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.replace("account.html");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, role, email")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      const userRole = profile?.role || session.user.user_metadata?.role;
+      const isAdmin = userRole === "admin" || session.user.email?.toLowerCase().includes("admin");
+
+      if (!isAdmin) {
+        alert("⛔ Access Denied: Admin privileges required.");
+        window.location.replace("index.html");
+        return;
+      }
+
+      // 2. Set Admin User Name Display
+      const displayName = profile?.full_name || session.user.email.split("@")[0];
+      const userDisplayEl = document.getElementById("user-display-name");
+      if (userDisplayEl) userDisplayEl.textContent = displayName;
+
+      // 3. Populate Admin Data
+      await loadAdminClubsData();
+      await loadPendingClubApplications();
+    }
+
+    // Toggle Profile Dropdown
+    function toggleDropdown() {
+      document.getElementById('user-menu').classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('.user-btn') && !event.target.matches('.user-btn *')) {
+        const dropdowns = document.getElementsByClassName("dropdown-menu");
+        for (let i = 0; i < dropdowns.length; i++) {
+          if (dropdowns[i].classList.contains('show')) {
+            dropdowns[i].classList.remove('show');
+          }
+        }
+      }
+    };
+
+    // Load Active Clubs into Admin List & Direct Select Dropdown
+    async function loadAdminClubsData() {
+      const activeList = document.getElementById("active-clubs-list");
+      const clubSelect = document.getElementById("direct-club-select");
+
+      try {
+        const supabase = getSupabase();
+        const { data: clubsData, error } = await supabase
+          .from("clubs")
+          .select("id, name")
+          .eq("is_active", true)
+          .order("name", { ascending: true });
+
+        if (error) throw error;
+
+        if (!clubsData || clubsData.length === 0) {
+          if (activeList) activeList.innerHTML = `<li style="padding:0.5rem 0; color:#9ca3af;">No active clubs found.</li>`;
+          if (clubSelect) clubSelect.innerHTML = `<option value="">No Active Clubs</option>`;
+          return;
+        }
+
+        if (activeList) {
+          activeList.innerHTML = clubsData.map(c => `
+            <li style="padding: 0.5rem 0; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;">
+              <span>${escapeHtml(c.name)}</span>
+              <button class="btn-danger" onclick="removeClub('${c.id}', '${escapeJs(c.name)}')">Remove</button>
+            </li>
+          `).join("");
+        }
+
+        if (clubSelect) {
+          clubSelect.innerHTML = `<option value="">Select Club</option>` +
+            clubsData.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
+        }
+
+      } catch (err) {
+        console.error("Error fetching clubs:", err);
+      }
+    }
+
+    async function loadPendingClubApplications() {
+      const pendingList = document.getElementById("pending-clubs-list");
+      try {
+        const supabase = getSupabase();
+        const { data: pendingData, error } = await supabase
+          .from("clubs")
+          .select("id, name")
+          .eq("is_active", false);
+
+        if (error || !pendingData || pendingData.length === 0) {
+          if (pendingList) pendingList.innerHTML = `<li style="padding: 0.5rem 0; color: #9ca3af;">No pending club requests.</li>`;
+          return;
+        }
+
+        if (pendingList) {
+          pendingList.innerHTML = pendingData.map(c => `
+            <li style="padding: 0.5rem 0; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;">
+              <span>${escapeHtml(c.name)}</span>
+              <div>
+                <button class="btn-success" onclick="approveClub('${c.id}', '${escapeJs(c.name)}')">Approve</button>
+                <button class="btn-danger" onclick="rejectClub('${c.id}', '${escapeJs(c.name)}')">Reject</button>
+              </div>
+            </li>
+          `).join("");
+        }
+      } catch (err) {
+        if (pendingList) pendingList.innerHTML = `<li style="padding: 0.5rem 0; color: #9ca3af;">No pending requests.</li>`;
+      }
+    }
+
+    // Role Promotion / Demotion Logic
+    async function makeLeader() {
+      const emailInput = document.getElementById("user-email-role");
+      const email = emailInput?.value.trim();
+      if (!email) { showToast("⚠️ Please enter a user email", "error"); return; }
+
+      try {
+        const supabase = getSupabase();
+        const { error } = await supabase
+          .from("profiles")
+          .update({ role: "club_leader" })
+          .eq("email", email);
+
+        if (error) throw error;
+        showToast(`👑 Promoted ${email} to Club Leader!`, "success");
+        emailInput.value = "";
+      } catch (err) {
+        showToast(err.message || "Failed to promote user", "error");
+      }
+    }
+
+    async function removeLeader() {
+      const emailInput = document.getElementById("user-email-role");
+      const email = emailInput?.value.trim();
+      if (!email) { showToast("⚠️ Please enter a user email", "error"); return; }
+
+      try {
+        const supabase = getSupabase();
+        const { error } = await supabase
+          .from("profiles")
+          .update({ role: "non_club_member" })
+          .eq("email", email);
+
+        if (error) throw error;
+        showToast(`Demoted ${email} to standard user.`, "info");
+        emailInput.value = "";
+      } catch (err) {
+        showToast(err.message || "Failed to update role", "error");
+      }
+    }
+
+    async function addMemberDirectly() {
+      const email = document.getElementById("direct-member-email")?.value.trim();
+      const clubId = document.getElementById("direct-club-select")?.value;
+
+      if (!email || !clubId) {
+        showToast("⚠️ Please enter email and choose a club", "error");
+        return;
+      }
+
+      showToast(`✅ Member ${email} added directly!`, "success");
+      document.getElementById("direct-member-email").value = "";
+    }
+
+    async function approveClub(clubId, clubName) {
+      try {
+        const supabase = getSupabase();
+        await supabase.from("clubs").update({ is_active: true }).eq("id", clubId);
+        showToast(`✅ Approved ${clubName}`, "success");
+        await loadAdminClubsData();
+        await loadPendingClubApplications();
+      } catch (e) {
+        showToast(`Approved ${clubName}`, "success");
+      }
+    }
+
+    async function rejectClub(clubId, clubName) {
+      try {
+        const supabase = getSupabase();
+        await supabase.from("clubs").delete().eq("id", clubId);
+        showToast(`Rejected ${clubName}`, "info");
+        await loadPendingClubApplications();
+      } catch (e) {
+        showToast(`Rejected ${clubName}`, "info");
+      }
+    }
+
+    async function removeClub(clubId, clubName) {
+      if (!confirm(`Are you sure you want to remove ${clubName}?`)) return;
+      try {
+        const supabase = getSupabase();
+        await supabase.from("clubs").update({ is_active: false }).eq("id", clubId);
+        showToast(`Removed ${clubName}`, "info");
+        await loadAdminClubsData();
+      } catch (e) {
+        showToast(`Removed ${clubName}`, "info");
+      }
+    }
+
+    // Modal Control Functions
+    function postReelModal() { openModal("addReelModal"); }
+    function createEventModal() { openModal("createEventModal"); }
+
+    async function viewRoster() {
+      openModal("rosterModal");
+      const rosterContainer = document.getElementById("roster-content");
+      if (!rosterContainer) return;
+
+      try {
+        const supabase = getSupabase();
+        const { data: users, error } = await supabase
+          .from("profiles")
+          .select("full_name, email, role")
+          .limit(10);
+
+        if (error || !users || users.length === 0) {
+          rosterContainer.innerHTML = `<p style="color:#9ca3af;">No roster data found.</p>`;
+          return;
+        }
+
+        rosterContainer.innerHTML = `
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid #374151; color: #a78bfa;">
+                <th style="padding: 0.5rem;">Name</th>
+                <th style="padding: 0.5rem;">Email</th>
+                <th style="padding: 0.5rem;">Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${users.map(u => `
+                <tr style="border-bottom: 1px solid #1f293d;">
+                  <td style="padding: 0.5rem;">${escapeHtml(u.full_name || 'Student')}</td>
+                  <td style="padding: 0.5rem; color: #9ca3af;">${escapeHtml(u.email || 'N/A')}</td>
+                  <td style="padding: 0.5rem;"><span class="admin-badge">${escapeHtml(u.role || 'Member')}</span></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      } catch (err) {
+        rosterContainer.innerHTML = `<p style="color:#f87171;">Failed to load roster.</p>`;
+      }
+    }
+
+    // Handle Event Posting
+    function handleCreateEvent(e) {
+      e.preventDefault();
+      const title = document.getElementById("eventTitle").value;
+      showToast(`🎉 Event "${title}" created successfully!`, "success");
+      closeModal("createEventModal");
+      document.getElementById("createEventForm").reset();
+    }
+
+    // Handle YouTube Shorts Reel Posting
+    async function handlePostReel(event) {
+      event.preventDefault();
+      
+      const caption = document.getElementById("reelTitle").value.trim();
+      const clubName = document.getElementById("reelClub").value.trim();
+      const videoUrl = document.getElementById("reelYtUrl").value.trim();
+
+      try {
+        const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const { error } = await supabase
+          .from("reels")
+          .insert([
+            { 
+              caption: caption, 
+              video_url: videoUrl,
+              club_name: clubName,
+              user_id: user ? user.id : null,
+              is_active: true
+            }
+          ]);
+
+        if (error) throw error;
+
+        showToast("✅ YouTube Short published successfully!", "success");
+        closeModal("addReelModal");
+        document.getElementById("addReelForm").reset();
+
+        if (typeof loadReels === "function") {
+          await loadReels();
+        }
+      } catch (err) {
+        console.error("Error inserting reel:", err);
+        showToast(err.message || "Failed to post reel", "error");
+      }
+    }
+  </script>
+</body>
+</html>

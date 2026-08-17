@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leader Dashboard — CampusVerse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="toast" class="toast hidden"></div>
+
+  <nav class="navbar">
+    <div class="nav-brand" onclick="window.location.href='index.html'">
+      <div class="brand-icon">⬡</div>
+      <span>Campus<strong>Hub</strong> <small>(Club Leader)</small></span>
+    </div>
+    <div class="nav-user">
+      <button class="btn-primary" onclick="logout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <main class="dashboard-container" style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+    <header class="dashboard-header" style="margin-bottom: 2rem;">
+      <h1>👑 Club Management Dashboard</h1>
+      <p>Create club events, post reels, and manage your club members.</p>
+    </header>
+
+    <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <div class="event-card" style="padding: 1.5rem;">
+        <h3>Host New Event</h3>
+        <p>Publish workshops, hackathons, and ticketing options.</p>
+      </div>
+      <div class="event-card" style="padding: 1.5rem;">
+        <h3>Club Roster</h3>
+        <p>View active members and manage participant approvals.</p>
+      </div>
+      <div class="event-card" style="padding: 1.5rem;">
+        <h3>Post Reel / Highlight</h3>
+        <p>Share event highlights and media on the campus feed.</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

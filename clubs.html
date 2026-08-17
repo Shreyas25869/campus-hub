@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Hub — Clubs</title>
+  <link rel="stylesheet" href="clubs.css">
+</head>
+<body>
+  <main class="clubs-page">
+    <header class="clubs-header">
+      <div>
+        <p class="eyebrow">CAMPUS HUB</p>
+        <h1>Clubs</h1>
+        <p class="subtitle">Discover campus communities, manage your club, and find where you belong.</p>
+      </div>
+      <div class="header-actions">
+        <button id="notificationBtn" class="secondary-btn hidden" type="button">
+          🔔 Notifications <span id="notificationCount" class="notification-count hidden">0</span>
+        </button>
+        <button id="adminAddClubBtn" class="primary-btn hidden" type="button">Add Club</button>
+      </div>
+    </header>
+
+    <section id="errorState" class="state-card hidden"></section>
+    <section id="loadingState" class="state-card">Loading clubs...</section>
+
+    <section id="clubsContent" class="hidden">
+      <!-- ADMIN -->
+      <section id="adminSection" class="role-section hidden">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ADMIN</p>
+            <h2>Club Management</h2>
+            <p>Manage clubs, leaders, members and club events.</p>
+          </div>
+        </div>
+        <div id="adminClubGrid" class="club-grid"></div>
+      </section>
+
+      <!-- LEADER / MEMBER -->
+      <section id="myClubSection" class="role-section hidden">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" id="myClubEyebrow">MY CLUB</p>
+            <h2 id="myClubHeading">My Club</h2>
+            <p id="myClubSubtitle">Your club information and membership.</p>
+          </div>
+        </div>
+        <div id="myClubContainer"></div>
+      </section>
+
+      <!-- PUBLIC EXPLORE / LEADER / MEMBER -->
+      <section id="exploreSection" class="role-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">EXPLORE</p>
+            <h2 id="exploreHeading">Explore Clubs</h2>
+            <p id="exploreSubtitle">Browse clubs and discover campus communities.</p>
+          </div>
+        </div>
+
+        <div id="rankingSection" class="ranking-panel hidden">
+          <div class="section-heading compact">
+            <div>
+              <h3>🏆 Club Rankings</h3>
+              <p>Ranked using active membership and upcoming activity.</p>
+            </div>
+          </div>
+          <div id="rankingList" class="ranking-list"></div>
+        </div>
+
+        <div class="club-toolbar">
+          <input id="clubSearch" type="search" placeholder="Search clubs..." autocomplete="off">
+          <div id="categoryTabs" class="status-tabs"></div>
+        </div>
+
+        <div id="exploreClubGrid" class="club-grid"></div>
+      </section>
+    </section>
+  </main>
+
+  <!-- CLUB DETAILS -->
+  <div id="clubModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <article class="modal-card">
+      <button class="modal-close" data-close-modal aria-label="Close">&times;</button>
+      <div id="clubModalContent"></div>
+    </article>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div id="notificationModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-notifications></div>
+    <article class="modal-card notification-modal">
+      <button class="modal-close" data-close-notifications aria-label="Close">&times;</button>
+      <h2>Notifications</h2>
+      <p class="modal-subtitle">Club actions and membership requests.</p>
+      <div id="notificationList"></div>
+    </article>
+  </div>
+
+  <!-- CLUB FORM -->
+  <div id="clubFormModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-club-form></div>
+    <article class="modal-card form-modal">
+      <button class="modal-close" data-close-club-form aria-label="Close">&times;</button>
+      <h2 id="clubFormTitle">Add Club</h2>
+      <p class="modal-subtitle">Create or update a club.</p>
+      <form id="clubForm">
+        <input type="hidden" id="clubFormId">
+
+        <div class="form-grid">
+          <label>
+            Club name
+            <input id="clubName" maxlength="120" required>
+          </label>
+
+          <label>
+            Category
+            <input id="clubCategory" maxlength="80" required>
+          </label>
+
+          <label>
+            Tagline
+            <input id="clubTagline" maxlength="160">
+          </label>
+
+          <label>
+            Emoji
+            <input id="clubEmoji" maxlength="8" placeholder="🏛️">
+          </label>
+
+          <label class="full">
+            Description
+            <textarea id="clubDescription" rows="4"></textarea>
+          </label>
+
+          <label>
+            Instagram URL
+            <input id="clubInstagram" type="url">
+          </label>
+
+          <label>
+            YouTube URL
+            <input id="clubYoutube" type="url">
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="secondary-btn" data-close-club-form>Cancel</button>
+          <button type="submit" class="primary-btn">Save Club</button>
+        </div>
+      </form>
+    </article>
+  </div>
+
+  <!-- MEMBER FORM -->
+  <div id="memberFormModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-member-form></div>
+    <article class="modal-card form-modal">
+      <button class="modal-close" data-close-member-form aria-label="Close">&times;</button>
+      <h2>Add Member</h2>
+      <p class="modal-subtitle">Add an existing Campus Hub profile to the club.</p>
+      <form id="memberForm">
+        <input type="hidden" id="memberClubId">
+        <label>
+          Student
+          <select id="memberUserId" required></select>
+        </label>
+        <div class="form-actions">
+          <button type="button" class="secondary-btn" data-close-member-form>Cancel</button>
+          <button type="submit" class="primary-btn">Add Member</button>
+        </div>
+      </form>
+    </article>
+  </div>
+
+  <!-- LEADER FORM -->
+  <div id="leaderFormModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-leader-form></div>
+    <article class="modal-card form-modal">
+      <button class="modal-close" data-close-leader-form aria-label="Close">&times;</button>
+      <h2>Assign Leader</h2>
+      <p class="modal-subtitle">Promote an active club member to leader.</p>
+      <form id="leaderForm">
+        <input type="hidden" id="leaderClubId">
+        <label>
+          Member
+          <select id="leaderUserId" required></select>
+        </label>
+        <div class="form-actions">
+          <button type="button" class="secondary-btn" data-close-leader-form>Cancel</button>
+          <button type="submit" class="primary-btn">Make Leader</button>
+        </div>
+      </form>
+    </article>
+  </div>
+
+  <!-- EVENT FORM -->
+  <div id="eventFormModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-event-form></div>
+    <article class="modal-card form-modal">
+      <button class="modal-close" data-close-event-form aria-label="Close">&times;</button>
+      <h2>Create Club Event</h2>
+      <p class="modal-subtitle">Create an event for the selected club.</p>
+      <form id="clubEventForm">
+        <input type="hidden" id="eventClubId">
+
+        <div class="form-grid">
+          <label>
+            Event title
+            <input id="eventTitle" maxlength="150" required>
+          </label>
+
+          <label>
+            Event type
+            <input id="eventType" value="general" maxlength="60" required>
+          </label>
+
+          <label>
+            Start
+            <input id="eventStart" type="datetime-local" required>
+          </label>
+
+          <label>
+            End
+            <input id="eventEnd" type="datetime-local" required>
+          </label>
+
+          <label>
+            Venue
+            <input id="eventVenue" maxlength="180">
+          </label>
+
+          <label>
+            Capacity
+            <input id="eventCapacity" type="number" min="1">
+          </label>
+
+          <label>
+            Visibility
+            <select id="eventVisibility">
+              <option value="open">Open to All</option>
+              <option value="club">Club Members</option>
+            </select>
+          </label>
+
+          <label>
+            Price
+            <input id="eventPrice" type="number" min="0" value="0">
+          </label>
+
+          <label class="full">
+            Description
+            <textarea id="eventDescription" rows="4"></textarea>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="secondary-btn" data-close-event-form>Cancel</button>
+          <button type="submit" class="primary-btn">Create Event</button>
+        </div>
+      </form>
+    </article>
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="clubs.js"></script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+from pathlib import Path
+
+signup_html = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="description"
+    content="Create your CampusHub account and join your campus community."
+  />
+
+  <title>Sign Up | CampusHub</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Shared CampusHub styling -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="auth.css" />
+</head>
+
+<body class="auth-page">
+
+  <!-- Background effects -->
+  <div class="auth-bg" aria-hidden="true">
+    <div class="auth-glow auth-glow-one"></div>
+    <div class="auth-glow auth-glow-two"></div>
+    <div class="auth-grid"></div>
+  </div>
+
+  <!-- Minimal authentication navbar -->
+  <header class="auth-navbar">
+    <a href="index.html" class="auth-brand" aria-label="CampusHub home">
+      <span class="auth-brand-icon">⬡</span>
+      <span>Campus<strong>Hub</strong></span>
+    </a>
+
+    <a href="index.html" class="auth-home-link">
+      ← Back to CampusHub
+    </a>
+  </header>
+
+  <main class="auth-main">
+
+    <section class="auth-card auth-card-signup" aria-labelledby="signupTitle">
+
+      <div class="auth-card-glow" aria-hidden="true"></div>
+
+      <div class="auth-header">
+        <div class="auth-icon">⬡</div>
+
+        <span class="auth-eyebrow">JOIN THE COMMUNITY</span>
+
+        <h1 id="signupTitle">
+          Create your <span>account.</span>
+        </h1>
+
+        <p>
+          Join CampusHub and discover everything happening on campus.
+        </p>
+      </div>
+
+      <form id="signupForm" class="auth-form" novalidate>
+
+        <!-- Full name -->
+        <div class="auth-field">
+          <label for="signupName">Full Name</label>
+
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">◉</span>
+
+            <input
+              type="text"
+              id="signupName"
+              name="full_name"
+              placeholder="Enter your full name"
+              autocomplete="name"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="auth-field">
+          <label for="signupEmail">Email</label>
+
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">✉</span>
+
+            <input
+              type="email"
+              id="signupEmail"
+              name="email"
+              placeholder="you@university.edu"
+              autocomplete="email"
+              inputmode="email"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Account type -->
+        <div class="auth-field">
+          <label for="signupRole">Account Type</label>
+
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">◆</span>
+
+            <select
+              id="signupRole"
+              name="signup_type"
+              required
+            >
+              <option value="non_club_member">Non-Club Member</option>
+              <option value="club_member">Club Member</option>
+            </select>
+          </div>
+
+          <small class="auth-help">
+            You can choose whether you are currently a club member.
+          </small>
+        </div>
+
+        <!-- Password -->
+        <div class="auth-field">
+          <label for="signupPassword">Password</label>
+
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">⌑</span>
+
+            <input
+              type="password"
+              id="signupPassword"
+              name="password"
+              placeholder="Create a password"
+              autocomplete="new-password"
+              minlength="6"
+              required
+            />
+
+            <button
+              type="button"
+              class="password-toggle"
+              id="toggleSignupPassword"
+              aria-label="Show password"
+              aria-pressed="false"
+            >
+              Show
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm password -->
+        <div class="auth-field">
+          <label for="signupConfirmPassword">Confirm Password</label>
+
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">✓</span>
+
+            <input
+              type="password"
+              id="signupConfirmPassword"
+              name="confirm_password"
+              placeholder="Re-enter your password"
+              autocomplete="new-password"
+              minlength="6"
+              required
+            />
+
+            <button
+              type="button"
+              class="password-toggle"
+              id="toggleSignupConfirmPassword"
+              aria-label="Show confirmation password"
+              aria-pressed="false"
+            >
+              Show
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="signupButton" class="auth-submit">
+          <span class="auth-submit-text">Create Account</span>
+          <span class="auth-submit-loader" aria-hidden="true"></span>
+        </button>
+
+        <div
+          id="authMessage"
+          class="auth-message"
+          role="alert"
+          aria-live="polite"
+          hidden
+        ></div>
+
+      </form>
+
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+
+      <p class="auth-switch">
+        Already have a CampusHub account?
+        <a href="login.html">Log in</a>
+      </p>
+
+    </section>
+
+    <p class="auth-footer-note">
+      Your account information is securely handled by Supabase.
+    </p>
+
+  </main>
+
+  <!-- Supabase must load before auth.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      function setupPasswordToggle(inputId, buttonId) {
+        const input = document.getElementById(inputId);
+        const button = document.getElementById(buttonId);
+
+        if (!input || !button) return;
+
+        button.addEventListener("click", () => {
+          const visible = input.type === "text";
+
+          input.type = visible ? "password" : "text";
+          button.textContent = visible ? "Show" : "Hide";
+          button.setAttribute("aria-pressed", String(!visible));
+          button.setAttribute(
+            "aria-label",
+            visible ? "Show password" : "Hide password"
+          );
+        });
+      }
+
+      setupPasswordToggle(
+        "signupPassword",
+        "toggleSignupPassword"
+      );
+
+      setupPasswordToggle(
+        "signupConfirmPassword",
+        "toggleSignupConfirmPassword"
+      );
+
+      // Client-side confirmation check.
+      const form = document.getElementById("signupForm");
+
+      if (form) {
+        form.addEventListener("submit", (event) => {
+          const password = document.getElementById("signupPassword");
+          const confirm = document.getElementById("signupConfirmPassword");
+
+          if (!password || !confirm) return;
+
+          if (password.value !== confirm.value) {
+            event.preventDefault();
+
+            const message = document.getElementById("authMessage");
+
+            if (message) {
+              message.hidden = false;
+              message.className = "auth-message error";
+              message.textContent = "Passwords do not match.";
+            }
+
+            confirm.focus();
+          }
+        }, true);
+      }
+    });
+  </script>
+
+</body>
+</html>
